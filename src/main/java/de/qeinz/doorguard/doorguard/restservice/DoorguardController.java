@@ -8,6 +8,7 @@ import de.qeinz.doorguard.doorguard.models.LoginRequest;
 import de.qeinz.doorguard.doorguard.repositorys.AccountRepository;
 import de.qeinz.doorguard.doorguard.repositorys.CodeRepository;
 
+import de.qeinz.doorguard.doorguard.utils.LockOpener;
 import de.qeinz.doorguard.doorguard.utils.Methods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -97,6 +98,8 @@ public class DoorguardController {
             if (codeEntity.isOnetimePassword()) {
                 codeRepository.delete(codeEntity);
             }
+
+            //TODO: einbauen des Lockopener.ublockLock
             return ResponseEntity.ok("Lock successfully unlocked.");
         } else {
             Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
