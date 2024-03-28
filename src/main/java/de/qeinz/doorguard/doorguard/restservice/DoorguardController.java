@@ -104,6 +104,7 @@ public class DoorguardController {
                 accountRepository.findByAccountNameAndAccountPassword(username, password);
         if (accountEntity != null) {
             String accountCode = accountEntity.getAccountCode();
+
             return ResponseEntity.ok(accountCode);
         } else {
             return ResponseEntity.badRequest().body("Invalid username or password");
