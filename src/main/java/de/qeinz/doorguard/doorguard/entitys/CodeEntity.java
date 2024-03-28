@@ -101,37 +101,4 @@ public class CodeEntity {
     public void setActivated(boolean activated) {
         this.activated = activated;
     }
-
-
-    private String accountCode;
-
-    public String getAccountCode() {
-        return accountCode;
-    }
-
-    public void setAccountCode(String accountCode) {
-        this.accountCode = accountCode;
-    }
-
-
-    private String accountName;
-
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
-
-
-    private String accountPassword;
-
-    public String getAccountPassword() {
-        return accountPassword;
-    }
-
-    public void setAccountPassword(String accountPassword) {
-        this.accountPassword = accountPassword;
-    }
 }

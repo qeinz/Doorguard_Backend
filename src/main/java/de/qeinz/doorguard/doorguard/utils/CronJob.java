@@ -1,6 +1,7 @@
 package de.qeinz.doorguard.doorguard.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import de.qeinz.doorguard.doorguard.entitys.CodeEntity;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 
 @Component
+@EnableScheduling
 public class CronJob {
 
     @Autowired
