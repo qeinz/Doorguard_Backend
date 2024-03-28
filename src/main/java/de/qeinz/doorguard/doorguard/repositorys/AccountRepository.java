@@ -3,6 +3,8 @@ package de.qeinz.doorguard.doorguard.repositorys;
 import de.qeinz.doorguard.doorguard.entitys.AccountEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 /**
  * JavaDoc this file!
  * Created: 28.03.2024
@@ -12,4 +14,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
     AccountEntity findByAccountNameAndAccountPassword(String accountName, String accountPassword);
+
+    Optional<AccountEntity> findByAccountCode(String accountCode);
 }

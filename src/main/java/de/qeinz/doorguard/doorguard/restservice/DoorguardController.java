@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class DoorguardController {
@@ -92,7 +93,12 @@ public class DoorguardController {
             }
             return ResponseEntity.ok("Lock successfully unlocked.");
         } else {
-            return ResponseEntity.notFound().build();
+            Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
+            if (accountEntityOptional.isPresent()) {
+                return ResponseEntity.ok("Lock successfully unlocked.");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         }
     }
 
