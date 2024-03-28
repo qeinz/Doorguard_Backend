@@ -104,13 +104,17 @@ public class DoorguardController {
 
 
             return ResponseEntity.ok("Lock successfully unlocked.");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/unlock-door-admin/{code}")
+    public ResponseEntity<String> unlockAdmin(@PathVariable String code) {
+        Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
+        if (accountEntityOptional.isPresent()) {
+            return ResponseEntity.ok("Lock successfully unlocked.");
         } else {
-            Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
-            if (accountEntityOptional.isPresent()) {
-                return ResponseEntity.ok("Lock successfully unlocked.");
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return ResponseEntity.notFound().build();
         }
     }
 
