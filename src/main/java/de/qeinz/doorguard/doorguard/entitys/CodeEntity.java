@@ -14,11 +14,13 @@ public class CodeEntity {
     private boolean onedayPassword;
     private LocalDateTime creationDate;
     private LocalDateTime expirationDate;
+    private boolean activated; // Neue Spalte für Aktivierung
 
     // Standardkonstruktor
     public CodeEntity() {
         this.creationDate = LocalDateTime.now();
         this.expirationDate = null;
+        this.activated = true; // Standardmäßig auf "true" setzen
     }
 
     // Konstruktor mit Parametern
@@ -32,6 +34,7 @@ public class CodeEntity {
         } else {
             this.expirationDate = null;
         }
+        this.activated = true; // Standardmäßig auf "true" setzen
     }
 
     // Getter und Setter hier einfügen
@@ -88,5 +91,14 @@ public class CodeEntity {
 
     public void setExpirationDate(LocalDateTime expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    // Getter und Setter für 'activated'
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
     }
 }

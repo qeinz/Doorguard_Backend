@@ -52,4 +52,29 @@ public class DoorguardController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+    @PutMapping("/activate-code/{code}")
+    public ResponseEntity<String> activateCode(@PathVariable String code) {
+        CodeEntity codeEntity = codeRepository.findByPassword(code);
+        if (codeEntity != null) {
+            codeEntity.setActivated(true);
+            codeRepository.save(codeEntity);
+            return ResponseEntity.ok("Code successfully activated.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/deactivate-code/{code}")
+    public ResponseEntity<String> deactivateCode(@PathVariable String code) {
+        CodeEntity codeEntity = codeRepository.findByPassword(code);
+        if (codeEntity != null) {
+            codeEntity.setActivated(false);
+            codeRepository.save(codeEntity);
+            return ResponseEntity.ok("Code successfully deactivated.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
