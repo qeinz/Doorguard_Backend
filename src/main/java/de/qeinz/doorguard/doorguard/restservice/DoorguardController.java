@@ -2,6 +2,7 @@ package de.qeinz.doorguard.doorguard.restservice;
 
 import de.qeinz.doorguard.doorguard.entitys.AccountEntity;
 import de.qeinz.doorguard.doorguard.entitys.CodeEntity;
+import de.qeinz.doorguard.doorguard.models.AccountRequest;
 import de.qeinz.doorguard.doorguard.models.CodeRequest;
 import de.qeinz.doorguard.doorguard.models.LoginRequest;
 import de.qeinz.doorguard.doorguard.repositorys.AccountRepository;
@@ -119,6 +120,61 @@ public class DoorguardController {
             return ResponseEntity.ok(accountCode);
         } else {
             return ResponseEntity.badRequest().body("Invalid username or password");
+        }
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<String> updatePassword(@RequestBody AccountRequest request) {
+        String code = request.getAccountCode();
+        String newPassword = request.getPassword();
+
+        CodeEntity codeEntity = codeRepository.findByPassword(code);
+        if (codeEntity != null && codeEntity.isActivated()) {
+            codeEntity.setPassword(newPassword);
+            codeRepository.save(codeEntity);
+            return ResponseEntity.ok("Password successfully updated.");
+        } else {
+            Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
+            if (accountEntityOptional.isPresent()) {
+                AccountEntity accountEntity = accountEntityOptional.get();
+                accountEntity.setAccountPassword(newPassword);
+                accountRepository.save(accountEntity);
+                return ResponseEntity.ok("Password successfully updated.");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
+    }
+
+    @PutMapping("/update-name")
+    public ResponseEntity<String> updateName(@RequestBody AccountRequest request) {
+        String code = request.getAccountCode();
+        String newName = request.getName();
+
+        Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
+        if (accountEntityOptional.isPresent()) {
+            AccountEntity accountEntity = accountEntityOptional.get();
+            accountEntity.setAccountName(newName);
+            accountRepository.save(accountEntity);
+            return ResponseEntity.ok("Name successfully updated.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/update-code")
+    public ResponseEntity<String> updateCode(@RequestBody AccountRequest request) {
+        String code = request.getAccountCode();
+        String newCode = request.getNewAccountCode();
+
+        Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
+        if (accountEntityOptional.isPresent()) {
+            AccountEntity accountEntity = accountEntityOptional.get();
+            accountEntity.setAccountCode(newCode);
+            accountRepository.save(accountEntity);
+            return ResponseEntity.ok("Code successfully updated.");
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
