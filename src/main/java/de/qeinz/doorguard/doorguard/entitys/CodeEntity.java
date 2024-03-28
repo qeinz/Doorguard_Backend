@@ -1,7 +1,6 @@
 package de.qeinz.doorguard.doorguard.entitys;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,24 +12,29 @@ public class CodeEntity {
     private String password;
     private boolean onetimePassword;
     private boolean onedayPassword;
-    private LocalDateTime creationDate; // Das Erstellungsdatum
-    private LocalDateTime expirationDate; // Das Ablaufdatum
+    private LocalDateTime creationDate;
+    private LocalDateTime expirationDate;
 
-    // Konstruktor, Getter und Setter hier einfügen
-
-    // Konstruktor
+    // Standardkonstruktor
     public CodeEntity() {
-        this.creationDate = LocalDateTime.now(); // Setze das Erstellungsdatum auf das aktuelle Datum und Uhrzeit
-        // Setze das Ablaufdatum basierend auf onetimePassword
+        this.creationDate = LocalDateTime.now();
+        this.expirationDate = null;
+    }
+
+    // Konstruktor mit Parametern
+    public CodeEntity(String password, boolean onetimePassword, boolean onedayPassword) {
+        this.password = password;
+        this.onetimePassword = onetimePassword;
+        this.onedayPassword = onedayPassword;
+        this.creationDate = LocalDateTime.now();
         if (onetimePassword) {
-            this.expirationDate = LocalDateTime.now(); // Ablaufdatum für Einmalpasswort auf das Erstellungsdatum setzen
+            this.expirationDate = LocalDateTime.now();
         } else {
-            // Setze das Ablaufdatum auf null, wenn es sich nicht um ein Einmalpasswort handelt
             this.expirationDate = null;
         }
     }
 
-    // Getter und Setter für 'id', 'password', 'onetimePassword', 'onedayPassword', 'creationDate' und 'expirationDate' hier einfügen
+    // Getter und Setter hier einfügen
 
     // Getter und Setter für 'id'
     public Long getId() {
