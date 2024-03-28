@@ -98,8 +98,8 @@ public class DoorguardController {
             if (codeEntity.isOnetimePassword()) {
                 codeRepository.delete(codeEntity);
             }
-
             //TODO: einbauen des Lockopener.ublockLock
+
             return ResponseEntity.ok("Lock successfully unlocked.");
         } else {
             Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
