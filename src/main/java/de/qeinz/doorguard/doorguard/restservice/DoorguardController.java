@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
 
 @RestController
 public class DoorguardController {
@@ -98,7 +99,8 @@ public class DoorguardController {
             if (codeEntity.isOnetimePassword()) {
                 codeRepository.delete(codeEntity);
             }
-            //TODO: einbauen des Lockopener.ublockLock
+            LockOpener.unlockLock();
+
 
             return ResponseEntity.ok("Lock successfully unlocked.");
         } else {

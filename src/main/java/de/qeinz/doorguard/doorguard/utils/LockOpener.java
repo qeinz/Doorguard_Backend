@@ -12,15 +12,10 @@ import java.net.URL;
  */
 public class LockOpener {
 
-    public static void main(String[] args) {
-        String lockEntityId = "lock.front_door";
-        String apiUrl = "http://your_home_assistant_url:8123/api";
-        String accessToken = "your_access_token";
-
-        unlockLock(lockEntityId, apiUrl, accessToken);
-    }
-
-    public static void unlockLock(String lockEntityId, String apiUrl, String accessToken) {
+    public static void unlockLock() {
+        String lockEntityId = System.getenv("LOCK_ID");
+        String apiUrl = System.getenv("API_URL");
+        String accessToken = System.getenv("TOKEN");
         try {
             URL url = new URL(apiUrl + "/services/lock/unlock");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
