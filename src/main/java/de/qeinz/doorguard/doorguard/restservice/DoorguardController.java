@@ -111,6 +111,7 @@ public class DoorguardController {
     public ResponseEntity<String> unlockAdmin(@PathVariable String code) {
         Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
         if (accountEntityOptional.isPresent()) {
+            LockOpener.unlockLock();
             return ResponseEntity.ok("Lock successfully unlocked.");
         } else {
             return ResponseEntity.notFound().build();
