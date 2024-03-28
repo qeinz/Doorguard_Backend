@@ -94,6 +94,7 @@ public class DoorguardController {
 
     @PostMapping("/unlock-door/{code}")
     public ResponseEntity<String> unlockLock(@PathVariable String code) {
+        System.out.println("lol");
         CodeEntity codeEntity = codeRepository.findByPassword(code);
         if (codeEntity != null && codeEntity.isActivated()) {
             if (codeEntity.isOnetimePassword()) {
