@@ -13,7 +13,7 @@ public class DataInitializer implements CommandLineRunner {
     private AccountRepository accountRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         if (accountRepository.count() == 0) {
             AccountEntity admin = new AccountEntity();
             admin.setAccountName("admin");
