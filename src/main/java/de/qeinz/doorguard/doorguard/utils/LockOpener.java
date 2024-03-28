@@ -18,9 +18,6 @@ public class LockOpener {
         String lockEntityId = System.getenv("LOCK_ID");
         String apiUrl = System.getenv("API_URL");
         String accessToken = System.getenv("TOKEN");
-        System.out.println(lockEntityId);
-        System.out.println(apiUrl);
-        System.out.println(accessToken);
         try {
             URL url = new URL(apiUrl + "/services/lock/open");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
