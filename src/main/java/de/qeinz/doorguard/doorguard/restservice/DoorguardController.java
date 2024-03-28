@@ -1,7 +1,10 @@
 package de.qeinz.doorguard.doorguard.restservice;
 
+import de.qeinz.doorguard.doorguard.entitys.AccountEntity;
 import de.qeinz.doorguard.doorguard.entitys.CodeEntity;
 import de.qeinz.doorguard.doorguard.models.CodeRequest;
+import de.qeinz.doorguard.doorguard.models.LoginRequest;
+import de.qeinz.doorguard.doorguard.repositorys.AccountRepository;
 import de.qeinz.doorguard.doorguard.repositorys.CodeRepository;
 
 import de.qeinz.doorguard.doorguard.utils.Methods;
@@ -17,6 +20,9 @@ public class DoorguardController {
 
     @Autowired
     private CodeRepository codeRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @PostMapping("/generate-code")
     public String generateCode(@RequestBody CodeRequest request) {
@@ -87,6 +93,20 @@ public class DoorguardController {
             return ResponseEntity.ok("Lock successfully unlocked.");
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
+        AccountEntity accountEntity =
+                accountRepository.findByAccountNameAndAccountPassword(username, password);
+        if (accountEntity != null) {
+            String accountCode = accountEntity.getAccountCode();
+            return ResponseEntity.ok(accountCode);
+        } else {
+            return ResponseEntity.badRequest().body("Invalid username or password");
         }
     }
 
