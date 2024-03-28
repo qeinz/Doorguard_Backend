@@ -7,6 +7,7 @@ package de.qeinz.doorguard.doorguard.models;
  * @author Nikk (dominik@minesort.de)
  */
 public class CodeRequest {
+    private String accountCode;
     private boolean onetimePassword;
     private boolean onedayPassword;
 
@@ -32,5 +33,13 @@ public class CodeRequest {
 
     public void setOnedayPassword(boolean onedayPassword) {
         this.onedayPassword = onedayPassword;
+    }
+
+    public String getAccountCode() {
+        return accountCode;
+    }
+
+    public void setAccountCode(String accountCode) {
+        this.accountCode = accountCode;
     }
 }

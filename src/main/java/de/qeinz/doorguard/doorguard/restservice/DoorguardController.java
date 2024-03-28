@@ -27,20 +27,25 @@ public class DoorguardController {
 
     @PostMapping("/generate-code")
     public String generateCode(@RequestBody CodeRequest request) {
-        final String password = Methods.generatePassword();
+        Optional<AccountEntity> accountEntityOptional =
+                accountRepository.findByAccountCode(request.getAccountCode());
+        if (accountEntityOptional.isPresent()) {
+            final String password = Methods.generatePassword();
 
-        CodeEntity codeEntity = new CodeEntity();
-        codeEntity.setOnetimePassword(request.isOnetimePassword());
-        codeEntity.setOnedayPassword(request.isOnedayPassword());
-        codeEntity.setPassword(password);
+            CodeEntity codeEntity = new CodeEntity();
+            codeEntity.setOnetimePassword(request.isOnetimePassword());
+            codeEntity.setOnedayPassword(request.isOnedayPassword());
+            codeEntity.setPassword(password);
 
-        if (request.isOnedayPassword()) {
-            LocalDate expirationDate = LocalDate.now().plusDays(1);
-            codeEntity.setExpirationDate(expirationDate.atStartOfDay());
+            if (request.isOnedayPassword()) {
+                LocalDate expirationDate = LocalDate.now().plusDays(1);
+                codeEntity.setExpirationDate(expirationDate.atStartOfDay());
+            }
+
+            codeRepository.save(codeEntity);
+            return password;
         }
-
-        codeRepository.save(codeEntity);
-        return password;
+        return null;
     }
 
     @GetMapping("/get-all-codes")
