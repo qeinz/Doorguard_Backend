@@ -3,15 +3,13 @@ package de.qeinz.doorguard.doorguard.restservice;
 import de.qeinz.doorguard.doorguard.entitys.CodeEntity;
 import de.qeinz.doorguard.doorguard.models.CodeRequest;
 import de.qeinz.doorguard.doorguard.repositorys.CodeRepository;
-import de.qeinz.doorguard.doorguard.utils.LockOpener;
+
 import de.qeinz.doorguard.doorguard.utils.Methods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -79,20 +77,13 @@ public class DoorguardController {
         }
     }
 
-    @PostMapping("/unlock-door{code}")
+    @PostMapping("/unlock-door/{code}")
     public ResponseEntity<String> unlockLock(@PathVariable String code) {
         CodeEntity codeEntity = codeRepository.findByPassword(code);
-        System.out.println("code entity");
-        if (codeEntity != null) {
-            System.out.println("nicht null");
+        if (codeEntity != null && codeEntity.isActivated()) {
             if (codeEntity.isOnetimePassword()) {
-                System.out.println("ist onetime password");
                 codeRepository.delete(codeEntity);
             }
-
-            System.out.println("door unlocked");
-            //LockOpener.unlockLock("", "", "");
-
             return ResponseEntity.ok("Lock successfully unlocked.");
         } else {
             return ResponseEntity.notFound().build();
