@@ -2,12 +2,14 @@ package de.qeinz.doorguard.doorguard.restservice;
 
 import de.qeinz.doorguard.doorguard.entitys.AccountEntity;
 import de.qeinz.doorguard.doorguard.entitys.CodeEntity;
+import de.qeinz.doorguard.doorguard.entitys.UsedCodeEntity;
 import de.qeinz.doorguard.doorguard.models.AccountRequest;
 import de.qeinz.doorguard.doorguard.models.CodeRequest;
 import de.qeinz.doorguard.doorguard.models.LoginRequest;
 import de.qeinz.doorguard.doorguard.repositorys.AccountRepository;
 import de.qeinz.doorguard.doorguard.repositorys.CodeRepository;
 
+import de.qeinz.doorguard.doorguard.repositorys.UsedCodeRepository;
 import de.qeinz.doorguard.doorguard.utils.LockOpener;
 import de.qeinz.doorguard.doorguard.utils.Methods;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +30,9 @@ public class DoorguardController {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private UsedCodeRepository usedCodeRepository;
 
     @PostMapping("/generate-code")
     public String generateCode(@RequestBody CodeRequest request) {
@@ -53,6 +60,17 @@ public class DoorguardController {
     @GetMapping("/get-all-codes")
     public List<CodeEntity> getAllCodes() {
         return codeRepository.findAll();
+    }
+
+
+    @GetMapping("/get-codes-history/{code}")
+    public List<UsedCodeEntity> getAllCodes(@PathVariable String code) {
+        Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
+        if (accountEntityOptional.isPresent()) {
+            return usedCodeRepository.findAll();
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @DeleteMapping("/delete-code/{code}")
@@ -95,20 +113,43 @@ public class DoorguardController {
     public ResponseEntity<String> unlockLock(@PathVariable String code) {
         CodeEntity codeEntity = codeRepository.findByPassword(code);
         if (codeEntity != null && codeEntity.isActivated()) {
-            if (codeEntity.isOnetimePassword()) {
+
+            boolean isOneTimePassword = codeEntity.isOnetimePassword();
+            boolean isOneDayPassword = codeEntity.isOnedayPassword();
+
+            UsedCodeEntity codeUsedEntity = new UsedCodeEntity();
+            codeUsedEntity.setUsedCode(code);
+            codeUsedEntity.setUsageTime(LocalDateTime.now());
+            codeUsedEntity.setOneDayPassword(isOneDayPassword);
+            codeUsedEntity.setOneTimePassword(isOneTimePassword);
+            usedCodeRepository.save(codeUsedEntity);
+
+            if (isOneTimePassword) {
                 codeRepository.delete(codeEntity);
             }
-            //TODO: einbauen des Lockopener.ublockLock
+
+            //TODO: Einbauen des Lockopener.unlockLock
 
             return ResponseEntity.ok("Lock successfully unlocked.");
         }
         return ResponseEntity.notFound().build();
     }
 
+
     @PostMapping("/unlock-door-admin/{code}")
     public ResponseEntity<String> unlockAdmin(@PathVariable String code) {
         Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
         if (accountEntityOptional.isPresent()) {
+
+            UsedCodeEntity codeUsedEntity = new UsedCodeEntity();
+            codeUsedEntity.setUsedCode(code);
+            codeUsedEntity.setUsageTime(LocalDateTime.now());
+            codeUsedEntity.setOneDayPassword(false);
+            codeUsedEntity.setOneTimePassword(false);
+            usedCodeRepository.save(codeUsedEntity);
+
+            //TODO: Einbauen des Lockopener.unlockLock
+
             return ResponseEntity.ok("Lock successfully unlocked.");
         } else {
             return ResponseEntity.notFound().build();
