@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
 
 @RestController
 public class DoorguardController {
@@ -127,8 +128,7 @@ public class DoorguardController {
             if (isOneTimePassword) {
                 codeRepository.delete(codeEntity);
             }
-
-            //TODO: Einbauen des Lockopener.unlockLock
+            LockOpener.unlockLock();
 
             return ResponseEntity.ok("Lock successfully unlocked.");
         }
@@ -140,16 +140,13 @@ public class DoorguardController {
     public ResponseEntity<String> unlockAdmin(@PathVariable String code) {
         Optional<AccountEntity> accountEntityOptional = accountRepository.findByAccountCode(code);
         if (accountEntityOptional.isPresent()) {
-
+            LockOpener.unlockLock();
             UsedCodeEntity codeUsedEntity = new UsedCodeEntity();
             codeUsedEntity.setUsedCode(code);
             codeUsedEntity.setUsageTime(LocalDateTime.now());
             codeUsedEntity.setOneDayPassword(false);
             codeUsedEntity.setOneTimePassword(false);
             usedCodeRepository.save(codeUsedEntity);
-
-            //TODO: Einbauen des Lockopener.unlockLock
-
             return ResponseEntity.ok("Lock successfully unlocked.");
         } else {
             return ResponseEntity.notFound().build();

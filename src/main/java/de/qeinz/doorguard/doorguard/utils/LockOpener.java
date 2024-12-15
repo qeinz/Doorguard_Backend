@@ -3,7 +3,9 @@ package de.qeinz.doorguard.doorguard.utils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
+import java.io.OutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 /**
  * JavaDoc this file!
  * Created: 28.03.2024
@@ -12,37 +14,37 @@ import java.net.URL;
  */
 public class LockOpener {
 
-    public static void main(String[] args) {
-        String lockEntityId = "lock.front_door";
-        String apiUrl = "http://your_home_assistant_url:8123/api";
-        String accessToken = "your_access_token";
-
-        unlockLock(lockEntityId, apiUrl, accessToken);
-    }
-
-    public static void unlockLock(String lockEntityId, String apiUrl, String accessToken) {
+    public static void unlockLock() {
+        String lockEntityId = System.getenv("LOCK_ID");
+        String apiUrl = System.getenv("API_URL");
+        String accessToken = System.getenv("TOKEN");
         try {
-            URL url = new URL(apiUrl + "/services/lock/unlock");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL(apiUrl + "/services/lock/open");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
 
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
+            String data = "{\"entity_id\": \"" + lockEntityId + "\"}";
 
-            String input = "{\"entity_id\": " + lockEntityId + "}";
-
-            conn.getOutputStream().write(input.getBytes());
-
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                System.out.println("Lock successfully unlocked.");
-            } else {
-                System.out.println("Failed to unlock lock. Response code: " + conn.getResponseCode());
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = data.getBytes("utf-8");
+                os.write(input, 0, input.length);
             }
 
-            conn.disconnect();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                StringBuilder response = new StringBuilder();
+                String responseLine = null;
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine.trim());
+                }
+                System.out.println("Lock successfully unlocked.");
+            }
+
+            connection.disconnect();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error unlocking lock: " + e.getMessage());
         }
     }
 }
